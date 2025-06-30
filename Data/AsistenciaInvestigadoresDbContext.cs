@@ -4,13 +4,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Data;
 
-public partial class AsistenciasInvestigadoresDbContext : DbContext
+public partial class AsistenciaInvestigadoresDbContext : DbContext
 {
-    public AsistenciasInvestigadoresDbContext()
+    public AsistenciaInvestigadoresDbContext()
     {
     }
 
-    public AsistenciasInvestigadoresDbContext(DbContextOptions<AsistenciasInvestigadoresDbContext> options)
+    public AsistenciaInvestigadoresDbContext(DbContextOptions<AsistenciaInvestigadoresDbContext> options)
         : base(options)
     {
     }
@@ -19,11 +19,11 @@ public partial class AsistenciasInvestigadoresDbContext : DbContext
 
     public virtual DbSet<Departamento> Departamentos { get; set; }
 
-    public virtual DbSet<Investigador> Investigadors { get; set; }
+    public virtual DbSet<Investigador> Investigadores { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Server=DESKTOP-LQP2J5V\\SQLEXPRESS;DataBase=AsistenciasInvestigadoresDB;Trusted_Connection=True;TrustServerCertificate=True;");
+        => optionsBuilder.UseSqlServer("Server=SCYT12-758E\\SQLEXPRESS;Database=AsistenciaInvestigadoresDB;Trusted_Connection=True;TrustServerCertificate=True;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -52,9 +52,7 @@ public partial class AsistenciasInvestigadoresDbContext : DbContext
 
         modelBuilder.Entity<Investigador>(entity =>
         {
-            entity.HasKey(e => e.Idinvestigador);
-
-            entity.ToTable("Investigador");
+            entity.HasKey(e => e.Idinvestigador).HasName("PK_Investigador");
 
             entity.Property(e => e.Idinvestigador).HasColumnName("IDInvestigador");
             entity.Property(e => e.Nombre)
@@ -67,14 +65,14 @@ public partial class AsistenciasInvestigadoresDbContext : DbContext
                     r => r.HasOne<Departamento>().WithMany()
                         .HasForeignKey("Iddepartamento")
                         .OnDelete(DeleteBehavior.ClientSetNull)
-                        .HasConstraintName("FK_InvestigadorXDepartamento_Departamento"),
+                        .HasConstraintName("FK_InvestigadorDepartamento_Departamento"),
                     l => l.HasOne<Investigador>().WithMany()
                         .HasForeignKey("Idinvestigador")
                         .OnDelete(DeleteBehavior.ClientSetNull)
-                        .HasConstraintName("FK_InvestigadorXDepartamento_Investigador"),
+                        .HasConstraintName("FK_InvestigadorDepartamento_Investigador"),
                     j =>
                     {
-                        j.HasKey("Idinvestigador", "Iddepartamento").HasName("PK_InvestigadorXDepartamento");
+                        j.HasKey("Idinvestigador", "Iddepartamento");
                         j.ToTable("InvestigadoresDepartamentos");
                         j.IndexerProperty<int>("Idinvestigador").HasColumnName("IDInvestigador");
                         j.IndexerProperty<int>("Iddepartamento").HasColumnName("IDDepartamento");
